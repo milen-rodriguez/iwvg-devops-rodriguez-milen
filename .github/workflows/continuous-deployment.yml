@@ -1,7 +1,7 @@
 name: CD
 on:
   push:
-    branches: ['master']
+    branches: ['main']
 
 env:
   REPOSITORY: ${{ github.repository }} # <user>/<repo>
