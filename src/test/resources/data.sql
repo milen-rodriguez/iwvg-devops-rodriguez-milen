@@ -7,7 +7,8 @@ INSERT INTO "user" (
     address,
     city,
     province,
-    postal_code
+    postal_code,
+    active
 ) VALUES (
     1,
     'Ada',
@@ -17,7 +18,8 @@ INSERT INTO "user" (
     '1 Analytical Engine Way',
     'London',
     'London',
-    'N1 1AA'
+    'N1 1AA',
+    false
 );
 
 INSERT INTO "user" (
@@ -29,7 +31,8 @@ INSERT INTO "user" (
     address,
     city,
     province,
-    postal_code
+    postal_code,
+    active
 ) VALUES (
     2,
     'Grace',
@@ -39,7 +42,8 @@ INSERT INTO "user" (
     '2 Compiler Street',
     'New York',
     'New York',
-    '10001'
+    '10001',
+    false
 );
 
 INSERT INTO "user" (
@@ -51,7 +55,8 @@ INSERT INTO "user" (
     address,
     city,
     province,
-    postal_code
+    postal_code,
+    active
 ) VALUES (
     3,
     'Alan',
@@ -61,7 +66,8 @@ INSERT INTO "user" (
     '3 Enigma Road',
     'London',
     'London',
-    'N1 1AB'
+    'N1 1AB',
+    false
 );
 
 INSERT INTO "user" (
@@ -73,7 +79,8 @@ INSERT INTO "user" (
     address,
     city,
     province,
-    postal_code
+    postal_code,
+    active
 ) VALUES (
     4,
     'Edsger',
@@ -83,5 +90,6 @@ INSERT INTO "user" (
     '4 Algorithm Avenue',
     'Eindhoven',
     'North Brabant',
-    '5611 AA'
+    '5611 AA',
+    false
 );
