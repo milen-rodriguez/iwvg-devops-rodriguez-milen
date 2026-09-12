@@ -12,33 +12,28 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @ControllerAdvice
 public class ApiExceptionHandler {
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseBody
-    public ErrorMessage entityNotFound(NotFoundException exception) {
-        return new ErrorMessage(exception, HttpStatus.NOT_FOUND.value());
-    }
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ExceptionHandler(NotFoundException.class)
+  @ResponseBody
+  public ErrorMessage entityNotFound(NotFoundException exception) {
+    return new ErrorMessage(exception, HttpStatus.NOT_FOUND.value());
+  }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler({
-            NoResourceFoundException.class,
-            ResponseStatusException.class
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ExceptionHandler({NoResourceFoundException.class, ResponseStatusException.class})
+  @ResponseBody
+  public ErrorMessage noResourceFoundRequest(Exception exception) {
+    return new ErrorMessage(
+        new RuntimeException(
+            "Ruta no encontrada. Prueba con: **/actuator/info o **/swagger-ui.html o **/v3/api-docs o **/v3/api-docs.yaml"),
+        HttpStatus.NOT_FOUND.value());
+  }
 
-    })
-    @ResponseBody
-    public ErrorMessage noResourceFoundRequest(Exception exception) {
-        return new ErrorMessage(new RuntimeException(
-                "Ruta no encontrada. Prueba con: **/actuator/info o **/swagger-ui.html o **/v3/api-docs o **/v3/api-docs.yaml"),
-                HttpStatus.NOT_FOUND.value());
-    }
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({
-            Exception.class
-    })
-    @ResponseBody
-    public ErrorMessage exception(Exception exception) {
-        return new ErrorMessage(new RuntimeException("ERROR"), HttpStatus.INTERNAL_SERVER_ERROR.value());
-    }
-
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  @ExceptionHandler({Exception.class})
+  @ResponseBody
+  public ErrorMessage exception(Exception exception) {
+    return new ErrorMessage(
+        new RuntimeException("ERROR"), HttpStatus.INTERNAL_SERVER_ERROR.value());
+  }
 }
