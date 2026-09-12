@@ -84,6 +84,32 @@ class UserResourceFT {
   }
 
   @Test
+  void shouldMarkUserWithBlankAddressAsNotBillable() {
+    webTestClient
+        .get()
+        .uri(UserResource.USER + "/5")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.billable")
+        .isEqualTo(false);
+  }
+
+  @Test
+  void shouldMarkUserWithNullAddressAsNotBillable() {
+    webTestClient
+        .get()
+        .uri(UserResource.USER + "/6")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.billable")
+        .isEqualTo(false);
+  }
+
+  @Test
   void shouldReturnNotFoundWhenFindingUnknownUser() {
     webTestClient
         .get()
