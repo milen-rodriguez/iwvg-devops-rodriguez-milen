@@ -27,7 +27,15 @@ class UserServiceTest {
     Long userId = 1L;
     User user =
         new User(
-            "Ada", "Lovelace", "ada@example.com", "ID-1", "Address", "City", "Province", "12345");
+            "Ada",
+            "Lovelace",
+            "ada@example.com",
+            "ID-1",
+            "Address",
+            "City",
+            "Province",
+            "12345",
+            false);
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
     User result = userService.findById(userId);
@@ -55,7 +63,15 @@ class UserServiceTest {
     Long userId = 1L;
     User user =
         new User(
-            "Ada", "Lovelace", "ada@example.com", "ID-1", "Address", "City", "Province", "12345");
+            "Ada",
+            "Lovelace",
+            "ada@example.com",
+            "ID-1",
+            "Address",
+            "City",
+            "Province",
+            "12345",
+            false);
     when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
     userService.deleteById(userId);
