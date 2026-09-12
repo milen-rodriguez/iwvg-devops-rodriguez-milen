@@ -34,6 +34,54 @@ INSERT INTO "user" (
     postal_code,
     active
 ) VALUES (
+    5,
+    'Grace',
+    'Hopper',
+    'grace.blank@example.com',
+    'ID-5',
+    ' ',
+    'Arlington',
+    'Virginia',
+    '22201',
+    false
+);
+
+INSERT INTO "user" (
+    id,
+    first_name,
+    family_name,
+    email,
+    identity,
+    address,
+    city,
+    province,
+    postal_code,
+    active
+) VALUES (
+    6,
+    'Alan',
+    'Turing',
+    'alan.null@example.com',
+    'ID-6',
+    NULL,
+    'Manchester',
+    'Greater Manchester',
+    'M13 9PL',
+    false
+);
+
+INSERT INTO "user" (
+    id,
+    first_name,
+    family_name,
+    email,
+    identity,
+    address,
+    city,
+    province,
+    postal_code,
+    active
+) VALUES (
     2,
     'Grace',
     'Hopper',
