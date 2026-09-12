@@ -12,7 +12,8 @@ public record UserResponse(
     String city,
     String province,
     String postalCode,
-    boolean billable) {
+    boolean billable,
+    boolean active) {
 
   public static UserResponse from(User user) {
     return new UserResponse(
@@ -25,6 +26,7 @@ public record UserResponse(
         user.getCity(),
         user.getProvince(),
         user.getPostalCode(),
-        user.isBillable());
+        user.isBillable(),
+        user.isActive());
   }
 }

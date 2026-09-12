@@ -22,6 +22,7 @@ public class User {
   private String city;
   private String province;
   private String postalCode;
+  private boolean active;
 
   protected User() {}
 
@@ -33,7 +34,8 @@ public class User {
       String address,
       String city,
       String province,
-      String postalCode) {
+      String postalCode,
+      boolean active) {
     this.firstName = firstName;
     this.familyName = familyName;
     this.email = email;
@@ -42,6 +44,7 @@ public class User {
     this.city = city;
     this.province = province;
     this.postalCode = postalCode;
+    this.active = active;
   }
 
   public Long getId() {
@@ -78,6 +81,14 @@ public class User {
 
   public String getPostalCode() {
     return postalCode;
+  }
+
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
   }
 
   public boolean isBillable() {
