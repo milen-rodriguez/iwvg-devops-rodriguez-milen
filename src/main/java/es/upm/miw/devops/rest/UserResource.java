@@ -11,18 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(UserResource.USER)
 public class UserResource {
 
-    public static final String USER = "/user";
+  public static final String USER = "/user";
 
-    private final UserService userService;
+  private final UserService userService;
 
-    public UserResource(UserService userService)
-    {
-        this.userService = userService;
-    }
+  public UserResource(UserService userService) {
+    this.userService = userService;
+  }
 
-    @GetMapping("/{id}")
-    public UserResponse findById(@PathVariable Long id)
-    {
-        return UserResponse.from(userService.findById(id));
-    }
+  @GetMapping("/{id}")
+  public UserResponse findById(@PathVariable Long id) {
+    return UserResponse.from(userService.findById(id));
+  }
 }
