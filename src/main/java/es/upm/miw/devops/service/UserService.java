@@ -23,4 +23,10 @@ public class UserService {
   public void deleteById(Long id) {
     userRepository.delete(findById(id));
   }
+
+  @Transactional
+  public void activateById(Long id) {
+    User user = findById(id);
+    user.setActive(true);
+  }
 }
