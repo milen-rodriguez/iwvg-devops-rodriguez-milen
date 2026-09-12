@@ -81,4 +81,19 @@ public class User {
     public String getPostalCode() {
         return postalCode;
     }
+
+    public boolean isBillable() {
+        return hasContent(firstName)
+                && hasContent(familyName)
+                && hasContent(email)
+                && hasContent(identity)
+                && hasContent(address)
+                && hasContent(city)
+                && hasContent(province)
+                && hasContent(postalCode);
+    }
+
+    private boolean hasContent(String value) {
+        return value != null && !value.isBlank();
+    }
 }
