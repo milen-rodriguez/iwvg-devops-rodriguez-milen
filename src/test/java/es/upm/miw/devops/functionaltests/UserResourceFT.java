@@ -21,6 +21,38 @@ class UserResourceFT {
   @Autowired private UserRepository userRepository;
 
   @Test
+  void shouldActivateExistingUser() {
+    webTestClient
+        .put()
+        .uri(UserResource.USER + "/1/active")
+        .exchange()
+        .expectStatus()
+        .isNoContent()
+        .expectBody()
+        .isEmpty();
+
+    webTestClient
+        .get()
+        .uri(UserResource.USER + "/1")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.active")
+        .isEqualTo(true);
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenActivatingUnknownUser() {
+    webTestClient
+        .put()
+        .uri(UserResource.USER + "/9223372036854775807/active")
+        .exchange()
+        .expectStatus()
+        .isNotFound();
+  }
+
+  @Test
   void shouldFindExistingUserById() {
     webTestClient
         .get()

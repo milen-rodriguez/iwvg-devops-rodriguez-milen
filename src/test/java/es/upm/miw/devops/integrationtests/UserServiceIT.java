@@ -20,6 +20,20 @@ class UserServiceIT {
   @Autowired private UserRepository userRepository;
 
   @Test
+  void shouldActivateSeededUserById() {
+    userService.activateById(1L);
+
+    assertThat(userRepository.findById(1L).orElseThrow().isActive()).isTrue();
+  }
+
+  @Test
+  void shouldThrowNotFoundExceptionWhenActivatingUnknownUser() {
+    assertThatThrownBy(() -> userService.activateById(999L))
+        .isInstanceOf(NotFoundException.class)
+        .hasMessage("User with id 999 was not found");
+  }
+
+  @Test
   void shouldFindSeededUserById() {
     assertThat(userService.findById(1L).getEmail()).isEqualTo("ada.lovelace@example.com");
   }
