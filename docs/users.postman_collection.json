@@ -1,0 +1,269 @@
+{
+  "info": {
+    "name": "DevOps Users API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "item": [
+    {
+      "name": "Get billable user",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const user = pm.response.json();",
+              "pm.test('returns a billable inactive user', function () {",
+              "    pm.expect(user.billable).to.eql(true);",
+              "    pm.expect(user.active).to.eql(false);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get user with blank address",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user/2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('user is not billable', function () {",
+              "    pm.expect(pm.response.json().billable).to.eql(false);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get user with null address",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user/3"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('user is not billable', function () {",
+              "    pm.expect(pm.response.json().billable).to.eql(false);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get nonexistent user",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user/999"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns 404', function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get user with negative id",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user/-1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns 404 for a negative id', function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Activate user",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/user/2/active"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('activates the user', function () {",
+              "    pm.response.to.have.status(204);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify activated user",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user/2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('user is active', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().active).to.eql(true);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Activate nonexistent user",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/user/999/active"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns 404 for an unknown user', function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete nonexistent user",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/user/999"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns 404 for an unknown user', function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete user with null address",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/user/3"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('deletes the user', function () {",
+              "    pm.response.to.have.status(204);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get deleted user",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user/3"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('deleted user is unavailable', function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete user with negative id",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/user/-1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns 404 for a negative id', function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}
