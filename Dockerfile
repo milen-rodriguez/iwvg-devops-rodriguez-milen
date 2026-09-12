@@ -12,7 +12,7 @@ RUN mvn dependency:go-offline -B
    # Solo copia los fuentes java, NO los test
 COPY src ./src
    # Limpia y empaqueta (se crea el *.jar)
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests -B
 
 # ==ETAPA 2: Configuración de la app Java ==
    # Contenedor solo con JRE, para hacerlo mas pequeño
@@ -20,6 +20,9 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
    # Copia el archivo *jar generado en el contenedor de construcción
 COPY --from=build /app/target/*.jar app.jar
+RUN addgroup -S spring && adduser -S spring -G spring \
+    && chown spring:spring /app/app.jar
+USER spring
    # Este contenedor escucha el puerto indicado
 EXPOSE 8080
    # Define un comando para cuando se inicialice el contenedor en el host: java -jar app.jar
