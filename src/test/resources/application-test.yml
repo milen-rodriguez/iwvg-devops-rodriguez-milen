@@ -1,3 +1,7 @@
 logging:
   level:
     es.upm.miw: DEBUG
+
+spring:
+  jpa:
+    defer-datasource-initialization: true
