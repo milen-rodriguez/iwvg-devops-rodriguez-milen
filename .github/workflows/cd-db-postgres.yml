@@ -1,0 +1,70 @@
+name: Deploy PostgreSQL database
+
+on:
+  push:
+    branches: ['main']
+
+env:
+  POSTGRES_IMAGE: postgres:15.10
+  POSTGRES_CONTAINER: postgres-server
+  POSTGRES_VOLUME: postgres-data
+  DOCKER_NETWORK: devops
+  POSTGRES_DB: iwvg_database
+
+jobs:
+  deploy-postgres:
+    name: Deploy PostgreSQL on AWS Lightsail
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+
+    steps:
+      - name: 🚀 Deploy PostgreSQL on AWS Lightsail
+        uses: appleboy/ssh-action@v1.2.1
+        with:
+          host: ${{ secrets.AWS_LIGHTSAIL_IP_MAIN }}
+          username: ${{ secrets.AWS_LIGHTSAIL_USER_MAIN }}
+          key: ${{ secrets.AWS_LIGHTSAIL_SSH_KEY_MAIN }}
+          script: |
+            set -e
+
+            docker pull ${{ env.POSTGRES_IMAGE }}
+
+            docker network inspect ${{ env.DOCKER_NETWORK }} >/dev/null 2>&1 \
+              || docker network create ${{ env.DOCKER_NETWORK }}
+
+            docker volume inspect ${{ env.POSTGRES_VOLUME }} >/dev/null 2>&1 \
+              || docker volume create ${{ env.POSTGRES_VOLUME }}
+
+            docker rm -f ${{ env.POSTGRES_CONTAINER }} >/dev/null 2>&1 || true
+            docker run -d \
+              --name ${{ env.POSTGRES_CONTAINER }} \
+              --restart always \
+              --network ${{ env.DOCKER_NETWORK }} \
+              --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }}" \
+              --health-interval=10s \
+              --health-timeout=5s \
+              --health-retries=5 \
+              -p 5432:5432 \
+              -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
+              -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+              -e POSTGRES_DB="${{ env.POSTGRES_DB }}" \
+              -v ${{ env.POSTGRES_VOLUME }}:/var/lib/postgresql/data \
+              ${{ env.POSTGRES_IMAGE }}
+
+            echo "⏳ Esperando a que PostgreSQL esté disponible"
+            for i in $(seq 1 12); do
+              sleep 5
+              STATUS=$(docker inspect --format='{{.State.Health.Status}}' ${{ env.POSTGRES_CONTAINER }})
+              echo "Intento $i: $STATUS"
+              [ "$STATUS" = "healthy" ] && break
+            done
+
+            if [ "$STATUS" != "healthy" ]; then
+              echo "❌ Deploy de PostgreSQL fallido"
+              docker logs --tail 50 ${{ env.POSTGRES_CONTAINER }}
+              exit 1
+            fi
+
+            echo "✅ PostgreSQL desplegado correctamente"
+            docker image prune --filter "until=12h" -f
