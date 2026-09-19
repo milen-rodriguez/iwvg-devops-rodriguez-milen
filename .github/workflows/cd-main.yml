@@ -6,11 +6,13 @@ on:
 env:
   REPOSITORY: ${{ github.repository }} # <user>/<repo>
   GHCR_URL: ghcr.io # GitHub Container Registry
+  ARTIFACT: iwvg-devops-rodriguez-milen
 
 
 jobs:
   cd-staging:
-    name: Build and publish staging image
+    name: Deploy to AWS
+    environment: prod
 
     runs-on: ubuntu-22.04
     permissions:
@@ -48,6 +50,7 @@ jobs:
           push: true
           tags: |
             ${{ env.GHCR_URL }}/${{ env.REPOSITORY }}:${{ env.VERSION }}
+            ${{ env.GHCR_URL }}/${{ env.REPOSITORY }}:latest
             ${{ env.GHCR_URL }}/${{ env.REPOSITORY }}:staging
             ${{ env.GHCR_URL }}/${{ env.REPOSITORY }}:staging-${{ github.sha }}
           labels: |
@@ -73,12 +76,13 @@ jobs:
               --network devops \
               -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=prod \
-              -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
-              -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+              -e PRODUCTION_DB_URL="${{ secrets.PRODUCTION_DB_URL }}" \
+              -e PRODUCTION_DB_USER="${{ secrets.PRODUCTION_DB_USER }}" \
+              -e PRODUCTION_DB_PASSWORD="${{ secrets.PRODUCTION_DB_PASSWORD }}" \
               ghcr.io/${{ env.REPOSITORY }}:latest
             
             echo "⏳ Esperando a que se levante"
-            for i in $(seq 1 6); do
+            for i in $(seq 1 12); do
               sleep 15
               STATUS=$(docker inspect --format='{{.State.Health.Status}}' ${{ env.ARTIFACT }} 2>/dev/null)
               echo "Intento $i: $STATUS"
