@@ -41,13 +41,13 @@ jobs:
               --name ${{ env.POSTGRES_CONTAINER }} \
               --restart always \
               --network ${{ env.DOCKER_NETWORK }} \
-              --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USER }} -d ${{ env.POSTGRES_DB }}" \
+              --health-cmd="pg_isready -U ${{ secrets.PRODUCTION_DB_USER }} -d ${{ env.POSTGRES_DB }}" \
               --health-interval=10s \
               --health-timeout=5s \
               --health-retries=5 \
               -p 5432:5432 \
-              -e POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
-              -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+              -e POSTGRES_USER="${{ secrets.PRODUCTION_DB_USER }}" \
+              -e POSTGRES_PASSWORD="${{ secrets.PRODUCTION_DB_PASSWORD }}" \
               -e POSTGRES_DB="${{ env.POSTGRES_DB }}" \
               -v ${{ env.POSTGRES_VOLUME }}:/var/lib/postgresql/data \
               ${{ env.POSTGRES_IMAGE }}
