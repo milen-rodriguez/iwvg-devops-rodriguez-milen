@@ -40,4 +40,17 @@ class SystemResourceFT {
         .expectBody(String.class)
         .value(body -> assertThat(body).isNotNull().isNotEmpty());
   }
+
+  @Test
+  void testReadHealth() {
+    webTestClient
+        .get()
+        .uri("/actuator/health")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.status")
+        .isEqualTo("UP");
+  }
 }

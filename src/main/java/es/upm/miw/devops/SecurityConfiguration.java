@@ -23,6 +23,13 @@ public class SecurityConfiguration {
         // CSRF protection is disabled because this is a stateless REST API
         .csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
+        .authorizeHttpRequests(
+            authorization ->
+                authorization
+                    .requestMatchers("/actuator/health")
+                    .permitAll()
+                    .anyRequest()
+                    .permitAll())
         .build();
   }
 
