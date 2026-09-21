@@ -12,7 +12,7 @@
 ### Estado del código
 [![DevOps](https://github.com/milen-rodriguez/iwvg-devops-rodriguez-milen/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/milen-rodriguez/iwvg-devops-rodriguez-milen/actions/workflows/continuous-integration.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=iwvg-devops-rodriguez-milen&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=iwvg-devops-rodriguez-milen)
-[![Render broken](https://iwvg-devops-latest.onrender.com/version-badge)](https://iwvg-devops-latest.onrender.com/swagger-ui.html)
+[![Render broken](https://iwvg-devops-latest.onrender.com/version-badge)](https://iwvg-devops-rodriguez-milen-pre.onrender.com/swagger-ui.html)
 
 
 ### Tecnologías necesarias
