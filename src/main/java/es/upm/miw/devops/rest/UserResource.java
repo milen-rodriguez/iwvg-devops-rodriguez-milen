@@ -1,13 +1,17 @@
 package es.upm.miw.devops.rest;
 
+import es.upm.miw.devops.rest.dto.UserActiveRequest;
 import es.upm.miw.devops.rest.dto.UserRequest;
 import es.upm.miw.devops.rest.dto.UserResponse;
 import es.upm.miw.devops.rest.mapper.UserMapper;
 import es.upm.miw.devops.service.UserService;
+import es.upm.miw.devops.service.command.UpdateUserActiveCommand;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,5 +55,14 @@ public class UserResource {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void activateById(@PathVariable Long id) {
     userService.activateById(id);
+  }
+
+  @PatchMapping
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void updateActiveStatuses(@RequestBody List<@Valid UserActiveRequest> requests) {
+    userService.updateActiveStatuses(
+        requests.stream()
+            .map(request -> new UpdateUserActiveCommand(request.id(), request.active()))
+            .toList());
   }
 }
