@@ -2,6 +2,7 @@ package es.upm.miw.devops.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -9,7 +10,9 @@ import static org.mockito.Mockito.when;
 import es.upm.miw.devops.domain.User;
 import es.upm.miw.devops.persistence.UserRepository;
 import es.upm.miw.devops.rest.mapper.UserMapper;
+import es.upm.miw.devops.service.command.UpdateUserActiveCommand;
 import es.upm.miw.devops.service.command.UpdateUserCommand;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +28,48 @@ class UserServiceTest {
   @Mock private UserMapper userMapper;
 
   @InjectMocks private UserService userService;
+
+  @Test
+  void shouldUpdateActiveStatusForMultipleUsers() {
+    User firstUser = mock(User.class);
+    User secondUser = mock(User.class);
+    UpdateUserActiveCommand activateFirstUser = new UpdateUserActiveCommand(1L, true);
+    UpdateUserActiveCommand deactivateSecondUser = new UpdateUserActiveCommand(2L, false);
+    when(firstUser.getId()).thenReturn(1L);
+    when(secondUser.getId()).thenReturn(2L);
+    when(userRepository.findAllById(List.of(1L, 2L))).thenReturn(List.of(firstUser, secondUser));
+
+    userService.updateActiveStatuses(List.of(activateFirstUser, deactivateSecondUser));
+
+    verify(firstUser).getId();
+    verify(secondUser).getId();
+    verify(firstUser).setActive(true);
+    verify(secondUser).setActive(false);
+    verify(userRepository).findAllById(List.of(1L, 2L));
+    verifyNoMoreInteractions(userRepository, userMapper);
+    verifyNoMoreInteractions(firstUser, secondUser);
+  }
+
+  @Test
+  void shouldNotUpdateActiveStatusWhenUserDoesNotExist() {
+    UpdateUserActiveCommand command = new UpdateUserActiveCommand(999L, true);
+    when(userRepository.findAllById(List.of(999L))).thenReturn(List.of());
+
+    assertThatThrownBy(() -> userService.updateActiveStatuses(List.of(command)))
+        .isInstanceOf(NotFoundException.class)
+        .hasMessage("User with id 999 was not found");
+
+    verify(userRepository).findAllById(List.of(999L));
+    verifyNoMoreInteractions(userRepository, userMapper);
+  }
+
+  @Test
+  void shouldDoNothingWhenActiveStatusUpdateListIsEmpty() {
+    userService.updateActiveStatuses(List.of());
+
+    verify(userRepository).findAllById(List.of());
+    verifyNoMoreInteractions(userRepository, userMapper);
+  }
 
   @Test
   void shouldUpdateExistingUserPersonalData() {

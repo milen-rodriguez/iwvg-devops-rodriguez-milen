@@ -53,6 +53,86 @@ class UserResourceFT {
   }
 
   @Test
+  void shouldUpdateActiveStatusForMultipleUsers() {
+    webTestClient
+        .patch()
+        .uri(UserResource.USER)
+        .header("Content-Type", "application/json")
+        .bodyValue(
+            """
+            [
+              {
+                "id": 1,
+                "active": true
+              },
+              {
+                "id": 2,
+                "active": false
+              }
+            ]
+            """)
+        .exchange()
+        .expectStatus()
+        .isNoContent()
+        .expectBody()
+        .isEmpty();
+
+    webTestClient
+        .get()
+        .uri(UserResource.USER + "/1")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.active")
+        .isEqualTo(true);
+
+    webTestClient
+        .get()
+        .uri(UserResource.USER + "/2")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.active")
+        .isEqualTo(false);
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenUpdatingActiveStatusForUnknownUser() {
+    webTestClient
+        .patch()
+        .uri(UserResource.USER)
+        .header("Content-Type", "application/json")
+        .bodyValue(
+            """
+            [
+              {
+                "id": 9223372036854775807,
+                "active": true
+              }
+            ]
+            """)
+        .exchange()
+        .expectStatus()
+        .isNotFound();
+  }
+
+  @Test
+  void shouldAcceptEmptyActiveStatusUpdateList() {
+    webTestClient
+        .patch()
+        .uri(UserResource.USER)
+        .header("Content-Type", "application/json")
+        .bodyValue("[]")
+        .exchange()
+        .expectStatus()
+        .isNoContent()
+        .expectBody()
+        .isEmpty();
+  }
+
+  @Test
   void shouldUpdateExistingUserPersonalData() {
     webTestClient
         .put()
