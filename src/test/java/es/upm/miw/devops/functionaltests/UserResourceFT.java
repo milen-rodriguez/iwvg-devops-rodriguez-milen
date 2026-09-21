@@ -53,6 +53,61 @@ class UserResourceFT {
   }
 
   @Test
+  void shouldUpdateExistingUserPersonalData() {
+    webTestClient
+        .put()
+        .uri(UserResource.USER + "/4")
+        .header("Content-Type", "application/json")
+        .bodyValue(
+            """
+            {
+              "firstName": "Edsger",
+              "familyName": "Dijkstra Updated",
+              "email": "edsger.dijkstra@example.com",
+              "identity": "ID-4",
+              "address": "4 Algorithm Avenue",
+              "city": "Eindhoven",
+              "province": "North Brabant",
+              "postalCode": "5611 AA"
+            }
+            """)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.id")
+        .isEqualTo(4)
+        .jsonPath("$.familyName")
+        .isEqualTo("Dijkstra Updated")
+        .jsonPath("$.active")
+        .isEqualTo(false);
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenUpdatingUnknownUser() {
+    webTestClient
+        .put()
+        .uri(UserResource.USER + "/9223372036854775807")
+        .header("Content-Type", "application/json")
+        .bodyValue(
+            """
+            {
+              "firstName": "Ada",
+              "familyName": "Lovelace",
+              "email": "ada.lovelace@example.com",
+              "identity": "ID-1",
+              "address": "Address",
+              "city": "London",
+              "province": "London",
+              "postalCode": "N1 1AA"
+            }
+            """)
+        .exchange()
+        .expectStatus()
+        .isNotFound();
+  }
+
+  @Test
   void shouldFindExistingUserById() {
     webTestClient
         .get()
