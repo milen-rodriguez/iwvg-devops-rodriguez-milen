@@ -16,4 +16,4 @@ spring:
   sql:
     init:
       data-locations: classpath:data-dev.sql
-      mode: always
+      mode: embedded
