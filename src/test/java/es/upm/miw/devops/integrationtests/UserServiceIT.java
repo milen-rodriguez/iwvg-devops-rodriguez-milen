@@ -6,7 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import es.upm.miw.devops.persistence.UserRepository;
 import es.upm.miw.devops.service.NotFoundException;
 import es.upm.miw.devops.service.UserService;
+import es.upm.miw.devops.service.command.UpdateUserActiveCommand;
 import es.upm.miw.devops.service.command.UpdateUserCommand;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +34,38 @@ class UserServiceIT {
     assertThatThrownBy(() -> userService.activateById(999L))
         .isInstanceOf(NotFoundException.class)
         .hasMessage("User with id 999 was not found");
+  }
+
+  @Test
+  void shouldPersistActiveStatusForMultipleUsers() {
+    userService.updateActiveStatuses(
+        List.of(new UpdateUserActiveCommand(1L, true), new UpdateUserActiveCommand(2L, true)));
+
+    assertThat(userRepository.findById(1L).orElseThrow().isActive()).isTrue();
+    assertThat(userRepository.findById(2L).orElseThrow().isActive()).isTrue();
+  }
+
+  @Test
+  void shouldPersistDeactivationForExistingUser() {
+    userService.activateById(1L);
+
+    userService.updateActiveStatuses(List.of(new UpdateUserActiveCommand(1L, false)));
+
+    assertThat(userRepository.findById(1L).orElseThrow().isActive()).isFalse();
+  }
+
+  @Test
+  void shouldThrowNotFoundExceptionWhenUpdatingActiveStatusForUnknownUser() {
+    assertThatThrownBy(
+            () ->
+                userService.updateActiveStatuses(List.of(new UpdateUserActiveCommand(999L, true))))
+        .isInstanceOf(NotFoundException.class)
+        .hasMessage("User with id 999 was not found");
+  }
+
+  @Test
+  void shouldAcceptEmptyActiveStatusUpdateList() {
+    userService.updateActiveStatuses(List.of());
   }
 
   @Test
