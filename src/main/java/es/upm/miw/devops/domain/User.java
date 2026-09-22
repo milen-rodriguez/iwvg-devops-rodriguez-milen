@@ -1,6 +1,8 @@
 package es.upm.miw.devops.domain;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,6 +24,10 @@ public class User {
   private String city;
   private String province;
   private String postalCode;
+
+  @Enumerated(EnumType.STRING)
+  private Role role;
+
   private boolean active;
 
   protected User() {}
@@ -36,6 +42,30 @@ public class User {
       String province,
       String postalCode,
       boolean active) {
+    this(
+        firstName,
+        familyName,
+        email,
+        identity,
+        address,
+        city,
+        province,
+        postalCode,
+        Role.USER,
+        active);
+  }
+
+  public User(
+      String firstName,
+      String familyName,
+      String email,
+      String identity,
+      String address,
+      String city,
+      String province,
+      String postalCode,
+      Role role,
+      boolean active) {
     this.firstName = firstName;
     this.familyName = familyName;
     this.email = email;
@@ -44,6 +74,7 @@ public class User {
     this.city = city;
     this.province = province;
     this.postalCode = postalCode;
+    this.role = role;
     this.active = active;
   }
 
@@ -113,6 +144,18 @@ public class User {
 
   public void setPostalCode(String postalCode) {
     this.postalCode = postalCode;
+  }
+
+  public Role getRole() {
+    return role;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
+  }
+
+  public boolean isAdmin() {
+    return Role.ADMIN == role;
   }
 
   public boolean isActive() {
