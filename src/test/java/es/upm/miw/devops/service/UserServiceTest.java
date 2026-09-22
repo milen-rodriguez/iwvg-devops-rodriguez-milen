@@ -58,11 +58,29 @@ class UserServiceTest {
 
     verify(firstUser).getId();
     verify(secondUser).getId();
+    verify(firstUser).isAdmin();
+    verify(secondUser).isAdmin();
     verify(firstUser).setActive(true);
     verify(secondUser).setActive(false);
     verify(userRepository).findAllById(List.of(1L, 2L));
     verifyNoMoreInteractions(userRepository, userMapper);
     verifyNoMoreInteractions(firstUser, secondUser);
+  }
+
+  @Test
+  void shouldNotDeactivateAdminUser() {
+    User adminUser = mock(User.class);
+    UpdateUserActiveCommand deactivateAdmin = new UpdateUserActiveCommand(1L, false);
+    when(adminUser.getId()).thenReturn(1L);
+    when(adminUser.isAdmin()).thenReturn(true);
+    when(userRepository.findAllById(List.of(1L))).thenReturn(List.of(adminUser));
+
+    assertThatThrownBy(() -> userService.updateActiveStatuses(List.of(deactivateAdmin)))
+        .isInstanceOf(AdminUserDeactivationException.class)
+        .hasMessage("Admin user with id 1 cannot be deactivated");
+
+    verify(adminUser).isAdmin();
+    verify(adminUser, org.mockito.Mockito.never()).setActive(false);
   }
 
   @Test

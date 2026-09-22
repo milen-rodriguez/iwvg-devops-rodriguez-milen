@@ -1,5 +1,6 @@
 package es.upm.miw.devops.rest.exceptionshandler;
 
+import es.upm.miw.devops.service.AdminUserDeactivationException;
 import es.upm.miw.devops.service.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,6 +18,13 @@ public class ApiExceptionHandler {
   @ResponseBody
   public ErrorMessage entityNotFound(NotFoundException exception) {
     return new ErrorMessage(exception, HttpStatus.NOT_FOUND.value());
+  }
+
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ExceptionHandler(AdminUserDeactivationException.class)
+  @ResponseBody
+  public ErrorMessage adminUserDeactivation(AdminUserDeactivationException exception) {
+    return new ErrorMessage(exception, HttpStatus.CONFLICT.value());
   }
 
   @ResponseStatus(HttpStatus.NOT_FOUND)

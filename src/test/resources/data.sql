@@ -8,7 +8,8 @@ INSERT INTO "user" (
     city,
     province,
     postal_code,
-    active
+    active,
+    role
 ) VALUES (
     1,
     'Ada',
@@ -19,7 +20,8 @@ INSERT INTO "user" (
     'London',
     'London',
     'N1 1AA',
-    false
+    false,
+    'ADMIN'
 );
 
 INSERT INTO "user" (
@@ -32,7 +34,8 @@ INSERT INTO "user" (
     city,
     province,
     postal_code,
-    active
+    active,
+    role
 ) VALUES (
     5,
     'Grace',
@@ -43,7 +46,8 @@ INSERT INTO "user" (
     'Arlington',
     'Virginia',
     '22201',
-    false
+    false,
+    'USER'
 );
 
 INSERT INTO "user" (
@@ -56,7 +60,8 @@ INSERT INTO "user" (
     city,
     province,
     postal_code,
-    active
+    active,
+    role
 ) VALUES (
     6,
     'Alan',
@@ -67,7 +72,8 @@ INSERT INTO "user" (
     'Manchester',
     'Greater Manchester',
     'M13 9PL',
-    false
+    false,
+    'USER'
 );
 
 INSERT INTO "user" (
@@ -80,7 +86,8 @@ INSERT INTO "user" (
     city,
     province,
     postal_code,
-    active
+    active,
+    role
 ) VALUES (
     2,
     'Grace',
@@ -91,7 +98,8 @@ INSERT INTO "user" (
     'New York',
     'New York',
     '10001',
-    false
+    false,
+    'USER'
 );
 
 INSERT INTO "user" (
@@ -104,7 +112,8 @@ INSERT INTO "user" (
     city,
     province,
     postal_code,
-    active
+    active,
+    role
 ) VALUES (
     3,
     'Alan',
@@ -115,7 +124,8 @@ INSERT INTO "user" (
     'London',
     'London',
     'N1 1AB',
-    false
+    false,
+    'USER'
 );
 
 INSERT INTO "user" (
@@ -128,7 +138,8 @@ INSERT INTO "user" (
     city,
     province,
     postal_code,
-    active
+    active,
+    role
 ) VALUES (
     4,
     'Edsger',
@@ -139,5 +150,6 @@ INSERT INTO "user" (
     'Eindhoven',
     'North Brabant',
     '5611 AA',
-    false
+    false,
+    'USER'
 );

@@ -65,6 +65,9 @@ public class UserService {
           if (user == null) {
             throw new NotFoundException(User.class, command.id());
           }
+          if (user.isAdmin() && !command.active()) {
+            throw new AdminUserDeactivationException(command.id());
+          }
           user.setActive(command.active());
         });
   }
