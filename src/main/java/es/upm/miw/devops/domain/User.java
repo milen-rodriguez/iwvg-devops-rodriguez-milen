@@ -124,17 +124,6 @@ public class User {
   }
 
   public boolean isBillable() {
-    return hasContent(firstName)
-        && hasContent(familyName)
-        && hasContent(email)
-        && hasContent(identity)
-        && hasContent(address)
-        && hasContent(city)
-        && hasContent(province)
-        && hasContent(postalCode);
-  }
-
-  private boolean hasContent(String value) {
-    return value != null && !value.isBlank();
+    return BillablePolicy.isBillable(this);
   }
 }
