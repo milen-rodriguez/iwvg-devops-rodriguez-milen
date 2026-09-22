@@ -359,6 +359,112 @@
       ]
     },
     {
+      "name": "Reject admin user deactivation",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n    {\n        \"id\": 1,\n        \"active\": false\n    }\n]"
+        },
+        "url": "{{baseUrl}}/user"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('does not deactivate an admin user', function () {",
+              "    pm.response.to.have.status(409);",
+              "    const error = pm.response.json();",
+              "    pm.expect(error.error).to.eql('AdminUserDeactivationException');",
+              "    pm.expect(error.message).to.eql('Admin user with id 1 cannot be deactivated');",
+              "    pm.expect(error.code).to.eql(409);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify admin user remains active",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('admin user remains active', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().active).to.eql(true);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Deactivate regular user",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n    {\n        \"id\": 2,\n        \"active\": false\n    }\n]"
+        },
+        "url": "{{baseUrl}}/user"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('deactivates a regular user', function () {",
+              "    pm.response.to.have.status(204);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify regular user is inactive",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user/2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('regular user is inactive', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().active).to.eql(false);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
       "name": "Delete nonexistent user",
       "request": {
         "method": "DELETE",

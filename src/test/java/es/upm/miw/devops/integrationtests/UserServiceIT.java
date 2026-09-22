@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import es.upm.miw.devops.domain.User;
 import es.upm.miw.devops.persistence.UserRepository;
+import es.upm.miw.devops.service.AdminUserDeactivationException;
 import es.upm.miw.devops.service.NotFoundException;
 import es.upm.miw.devops.service.UserService;
 import es.upm.miw.devops.service.command.UpdateUserActiveCommand;
@@ -48,11 +49,19 @@ class UserServiceIT {
 
   @Test
   void shouldPersistDeactivationForExistingUser() {
-    userService.activateById(1L);
+    userService.activateById(2L);
 
-    userService.updateActiveStatuses(List.of(new UpdateUserActiveCommand(1L, false)));
+    userService.updateActiveStatuses(List.of(new UpdateUserActiveCommand(2L, false)));
 
-    assertThat(userRepository.findById(1L).orElseThrow().isActive()).isFalse();
+    assertThat(userRepository.findById(2L).orElseThrow().isActive()).isFalse();
+  }
+
+  @Test
+  void shouldNotDeactivateAdminUser() {
+    assertThatThrownBy(
+            () -> userService.updateActiveStatuses(List.of(new UpdateUserActiveCommand(1L, false))))
+        .isInstanceOf(AdminUserDeactivationException.class)
+        .hasMessage("Admin user with id 1 cannot be deactivated");
   }
 
   @Test
