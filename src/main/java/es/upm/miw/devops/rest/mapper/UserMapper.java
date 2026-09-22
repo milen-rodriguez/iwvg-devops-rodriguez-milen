@@ -18,6 +18,7 @@ public interface UserMapper {
 
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "active", ignore = true)
+  @Mapping(target = "role", ignore = true)
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   User merge(@MappingTarget User user, UpdateUserCommand updateUserCommand);
 

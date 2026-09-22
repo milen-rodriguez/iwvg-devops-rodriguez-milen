@@ -1,5 +1,7 @@
 package es.upm.miw.devops.rest.dto;
 
+import es.upm.miw.devops.domain.Role;
+
 public record UserResponse(
     Long id,
     String firstName,
@@ -10,5 +12,6 @@ public record UserResponse(
     String city,
     String province,
     String postalCode,
+    Role role,
     boolean billable,
     boolean active) {}
