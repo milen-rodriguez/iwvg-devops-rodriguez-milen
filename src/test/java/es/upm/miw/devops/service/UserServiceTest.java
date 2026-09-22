@@ -19,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -28,6 +29,20 @@ class UserServiceTest {
   @Mock private UserMapper userMapper;
 
   @InjectMocks private UserService userService;
+
+  @Test
+  void shouldFindAllUsersWithFilters() {
+    User firstUser = mock(User.class);
+    User secondUser = mock(User.class);
+    when(userRepository.findAll(org.mockito.ArgumentMatchers.<Specification<User>>any()))
+        .thenReturn(List.of(firstUser, secondUser));
+
+    List<User> result = userService.findAll(true, false);
+
+    assertThat(result).containsExactly(firstUser, secondUser);
+    verify(userRepository).findAll(org.mockito.ArgumentMatchers.<Specification<User>>any());
+    verifyNoMoreInteractions(userRepository, userMapper);
+  }
 
   @Test
   void shouldUpdateActiveStatusForMultipleUsers() {

@@ -53,6 +53,83 @@ class UserResourceFT {
   }
 
   @Test
+  void shouldFindAllUsers() {
+    webTestClient
+        .get()
+        .uri(UserResource.USER)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.length()")
+        .isEqualTo(4);
+  }
+
+  @Test
+  void shouldFindOnlyBillableUsers() {
+    webTestClient
+        .get()
+        .uri(uriBuilder -> uriBuilder.path(UserResource.USER).queryParam("billable", true).build())
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.length()")
+        .isEqualTo(2)
+        .jsonPath("$[0].billable")
+        .isEqualTo(true)
+        .jsonPath("$[1].billable")
+        .isEqualTo(true);
+  }
+
+  @Test
+  void shouldFindOnlyInactiveUsers() {
+    webTestClient
+        .get()
+        .uri(uriBuilder -> uriBuilder.path(UserResource.USER).queryParam("active", false).build())
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.length()")
+        .isEqualTo(3)
+        .jsonPath("$[0].active")
+        .isEqualTo(false);
+  }
+
+  @Test
+  void shouldFilterUsersByBillableAndActiveStatus() {
+    webTestClient
+        .put()
+        .uri(UserResource.USER + "/1/active")
+        .exchange()
+        .expectStatus()
+        .isNoContent();
+
+    webTestClient
+        .get()
+        .uri(
+            uriBuilder ->
+                uriBuilder
+                    .path(UserResource.USER)
+                    .queryParam("billable", true)
+                    .queryParam("active", true)
+                    .build())
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.length()")
+        .isEqualTo(1)
+        .jsonPath("$[0].id")
+        .isEqualTo(1)
+        .jsonPath("$[0].billable")
+        .isEqualTo(true)
+        .jsonPath("$[0].active")
+        .isEqualTo(true);
+  }
+
+  @Test
   void shouldUpdateActiveStatusForMultipleUsers() {
     webTestClient
         .patch()
