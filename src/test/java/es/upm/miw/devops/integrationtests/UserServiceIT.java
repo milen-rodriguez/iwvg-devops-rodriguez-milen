@@ -3,6 +3,7 @@ package es.upm.miw.devops.integrationtests;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import es.upm.miw.devops.domain.User;
 import es.upm.miw.devops.persistence.UserRepository;
 import es.upm.miw.devops.service.NotFoundException;
 import es.upm.miw.devops.service.UserService;
@@ -108,6 +109,22 @@ class UserServiceIT {
   @Test
   void shouldFindSeededUserById() {
     assertThat(userService.findById(1L).getEmail()).isEqualTo("ada.lovelace@example.com");
+  }
+
+  @Test
+  void shouldFindAllSeededUsers() {
+    assertThat(userService.findAll(null, null)).hasSize(6);
+  }
+
+  @Test
+  void shouldFilterSeededUsersByBillableStatus() {
+    assertThat(userService.findAll(true, null)).allMatch(User::isBillable).hasSize(4);
+    assertThat(userService.findAll(false, null)).noneMatch(User::isBillable).hasSize(2);
+  }
+
+  @Test
+  void shouldFilterSeededUsersByActiveStatus() {
+    assertThat(userService.findAll(null, false)).allMatch(user -> !user.isActive()).hasSize(5);
   }
 
   @Test

@@ -129,6 +129,103 @@
       ]
     },
     {
+      "name": "Get all users",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns all users', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json()).to.be.an('array').and.have.lengthOf(6);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get billable users",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user?billable=true"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns billable users', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const users = pm.response.json();",
+              "    pm.expect(users).to.be.an('array').and.have.lengthOf(4);",
+              "    users.forEach(function (user) {",
+              "        pm.expect(user.billable).to.eql(true);",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get inactive users",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user?active=false"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns inactive users', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const users = pm.response.json();",
+              "    pm.expect(users).to.be.an('array').and.have.lengthOf(6);",
+              "    users.forEach(function (user) {",
+              "        pm.expect(user.active).to.eql(false);",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get billable inactive users",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user?billable=true&active=false"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns billable inactive users', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const users = pm.response.json();",
+              "    pm.expect(users).to.be.an('array').and.have.lengthOf(4);",
+              "    users.forEach(function (user) {",
+              "        pm.expect(user.billable).to.eql(true);",
+              "        pm.expect(user.active).to.eql(false);",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
       "name": "Activate user",
       "request": {
         "method": "PUT",
@@ -182,6 +279,78 @@
             "exec": [
               "pm.test('returns 404 for an unknown user', function () {",
               "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update users active status",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n    {\n        \"id\": 1,\n        \"active\": true\n    },\n    {\n        \"id\": 2,\n        \"active\": true\n    }\n]"
+        },
+        "url": "{{baseUrl}}/user"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('updates the users active status', function () {",
+              "    pm.response.to.have.status(204);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify users active status",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('first user is active', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().active).to.eql(true);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify second user active status",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user/2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('second user is active', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().active).to.eql(true);",
               "});"
             ],
             "type": "text/javascript"
@@ -262,6 +431,120 @@
             "exec": [
               "pm.test('returns 404 for a negative id', function () {",
               "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update user personal data",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"firstName\": \"Ada\",\n    \"familyName\": \"Byron Lovelace\",\n    \"email\": \"ada.lovelace@example.com\",\n    \"identity\": \"ID-0001\",\n    \"address\": \"12 St. James's Square\",\n    \"city\": \"London\",\n    \"province\": \"Greater London\",\n    \"postalCode\": \"SW1Y 4LB\"\n}"
+        },
+        "url": "{{baseUrl}}/user/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('updates the user', function () {",
+              "    pm.response.to.have.status(200);",
+              "    const user = pm.response.json();",
+              "    pm.expect(user.id).to.eql(1);",
+              "    pm.expect(user.familyName).to.eql('Byron Lovelace');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify updated user",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/user/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('user data was updated', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().familyName).to.eql('Byron Lovelace');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update nonexistent user",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"firstName\": \"Ada\",\n    \"familyName\": \"Byron Lovelace\",\n    \"email\": \"ada.lovelace@example.com\",\n    \"identity\": \"ID-0001\",\n    \"address\": \"12 St. James's Square\",\n    \"city\": \"London\",\n    \"province\": \"Greater London\",\n    \"postalCode\": \"SW1Y 4LB\"\n}"
+        },
+        "url": "{{baseUrl}}/user/999"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns 404 for an unknown user', function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update user with invalid data",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"firstName\": \"\",\n    \"familyName\": \"Lovelace\",\n    \"email\": \"not-an-email\",\n    \"identity\": \"ID-0001\",\n    \"address\": \"12 St. James's Square\",\n    \"city\": \"London\",\n    \"province\": \"Greater London\",\n    \"postalCode\": \"SW1Y 4LB\"\n}"
+        },
+        "url": "{{baseUrl}}/user/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('returns 400 for invalid user data', function () {",
+              "    pm.response.to.have.status(400);",
               "});"
             ],
             "type": "text/javascript"

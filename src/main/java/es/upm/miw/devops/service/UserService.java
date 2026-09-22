@@ -2,6 +2,7 @@ package es.upm.miw.devops.service;
 
 import es.upm.miw.devops.domain.User;
 import es.upm.miw.devops.persistence.UserRepository;
+import es.upm.miw.devops.persistence.UserSpecifications;
 import es.upm.miw.devops.rest.mapper.UserMapper;
 import es.upm.miw.devops.service.command.UpdateUserActiveCommand;
 import es.upm.miw.devops.service.command.UpdateUserCommand;
@@ -26,6 +27,11 @@ public class UserService {
   @Transactional(readOnly = true)
   public User findById(Long id) {
     return userRepository.findById(id).orElseThrow(() -> new NotFoundException(User.class, id));
+  }
+
+  @Transactional(readOnly = true)
+  public List<User> findAll(Boolean billable, Boolean active) {
+    return userRepository.findAll(UserSpecifications.withFilters(billable, active));
   }
 
   @Transactional
